@@ -75,7 +75,11 @@ namespace TestAPI.Services
             }
         }
 
-        public async Task<LegislatorBillSupportOpposition> GetLegislatorSupportOppositionAsync(int legislatorId)
+
+        //Separate in useCases
+        //Use MediatR pattern
+        //Create IoC
+        public async Task<LegislatorBillSupportOppositionDto> GetLegislatorSupportOppositionAsync(int legislatorId)
         {
             Person legislator = _legislators.FirstOrDefault(l => l.Id == legislatorId);
             if (legislator == null)
@@ -86,7 +90,7 @@ namespace TestAPI.Services
             int billsSupported = legislatorVotes.Count(vr => vr.VoteType == VoteType.Yea);
             int billsOpposed = legislatorVotes.Count(vr => vr.VoteType == VoteType.Nay);
 
-            return new LegislatorBillSupportOpposition
+            return new LegislatorBillSupportOppositionDto
             {
                 LegislatorId = legislatorId,
                 LegislatorName = legislator.Name,
@@ -95,7 +99,7 @@ namespace TestAPI.Services
             };
         }
 
-        public async Task<BillSupportOppositionResult> GetBillSupportOppositionAsync(int billId)
+        public async Task<BillSupportOppositionResultDto> GetBillSupportOppositionAsync(int billId)
         {
             Bill bill = _bills.FirstOrDefault(b => b.Id == billId);
             if (bill == null)
@@ -107,7 +111,7 @@ namespace TestAPI.Services
 
             string primarySponsor = bill.PrimarySponsor.Name;
 
-            return new BillSupportOppositionResult
+            return new BillSupportOppositionResultDto
             {
                 BillId = billId,
                 Title = bill.Title,
@@ -116,22 +120,5 @@ namespace TestAPI.Services
                 LegislatorsOpposed = billsOpposed
             };
         }
-    }
-
-    public class LegislatorBillSupportOpposition
-    {
-        public int LegislatorId { get; set; }
-        public string LegislatorName { get; set; }
-        public int BillsSupported { get; set; }
-        public int BillsOpposed { get; set; }
-    }
-
-    public class BillSupportOppositionResult
-    {
-        public int BillId { get; set; }
-        public string Title { get; set; }
-        public string PrimarySponsor { get; set; }
-        public int LegislatorsSupported { get; set; }
-        public int LegislatorsOpposed { get; set; }
     }
 }

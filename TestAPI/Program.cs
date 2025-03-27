@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -6,6 +7,7 @@ using TestAPI.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Register services
+builder.Services.AddMediatR(typeof(Program));
 builder.Services.AddScoped<VotingService>();  // Register the voting service
 builder.Services.AddControllers();            // Add controllers to the service container
 
