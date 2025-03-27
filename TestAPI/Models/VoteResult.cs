@@ -1,4 +1,4 @@
-namespace LegislatorAPI.Models
+namespace TestAPI.Models
 {
     public class VoteResult
     {
