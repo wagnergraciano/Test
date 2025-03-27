@@ -5,42 +5,42 @@ namespace TestAPI.Mappings;
 
 public static class MappingHelper
 {
-    public static Bill MapBillDtoToModel(BillCsvDto billDto)
+    public static Bill MapBillCsvDtoToModel(BillCsvDto billDto)
     {
         return new Bill
         {
             Id = billDto.id,
             Title = billDto.title,
-            PrimarySponsor = billDto.PrimarySponsor
+            SponsorId = billDto.sponsor_id
         };
     }
 
-    public static Person MapLegislatorDtoToModel(LegislatorCsvDto legislatorDto)
+    public static Person MapLegislatorCsvDtoToModel(PersonCsvDto legislatorDto)
     {
         return new Person
         {
-            Id = legislatorDto.Id,
-            Name = legislatorDto.Name
+            Id = legislatorDto.id,
+            Name = legislatorDto.name
         };
     }
 
-    public static Vote MapVoteDtoToModel(VoteCsvDto voteDto)
+    public static Vote MapVoteCsvDtoToModel(VoteCsvDto voteDto)
     {
         return new Vote
         {
-            Id = voteDto.Id,
-            BillId = voteDto.BillId
+            Id = voteDto.id,
+            BillId = voteDto.bill_id
         };
     }
 
-    public static VoteResult MapVoteResultDtoToModel(VoteResultCsvDto voteResultDto)
+    public static VoteResult MapVoteResultCsvDtoToModel(VoteResultCsvDto voteResultDto)
     {
         return new VoteResult
         {
-            Id = voteResultDto.Id,
-            LegislatorId = voteResultDto.LegislatorId,
-            VoteId = voteResultDto.VoteId,
-            VoteType = voteResultDto.VoteType
+            Id = voteResultDto.id,
+            LegislatorId = voteResultDto.legislator_id,
+            VoteId = voteResultDto.vote_id,
+            VoteType = voteResultDto.vote_type == 1 ? VoteType.Yea : VoteType.Nay
         };
     }
 }
