@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using TestAPI.Dtos.Csv;
 
 namespace TestAPI.Services
 {
@@ -26,34 +27,34 @@ namespace TestAPI.Services
         private void LoadDataFromCsv()
         {
             // Loading Bills
-            using (var reader = new StreamReader("Bills.csv"))
+            using (var reader = new StreamReader("Assets/bills_(2).csv"))
             using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
-                var records = csv.GetRecords<Bill>().ToList();
+                var records = csv.GetRecords<BillCsvDto>().ToList();
                 _bills.AddRange(records);
-            }
+            }            
 
             // Loading Legislators
-            using (var reader = new StreamReader("Legislators.csv"))
+            using (var reader = new StreamReader("Assets/legislators_(2).csv"))
             using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
-                var records = csv.GetRecords<Person>().ToList();
+                var records = csv.GetRecords<PersonCsvDto>().ToList();
                 _legislators.AddRange(records);
             }
 
             // Loading Votes
-            using (var reader = new StreamReader("Votes.csv"))
+            using (var reader = new StreamReader("Assets/votes_(2).csv"))
             using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
-                var records = csv.GetRecords<Vote>().ToList();
+                var records = csv.GetRecords<VoteCsvDto>().ToList();
                 _votes.AddRange(records);
             }
 
             // Loading VoteResults
-            using (var reader = new StreamReader("VoteResults.csv"))
+            using (var reader = new StreamReader("Assets/vote_results_(2).csv"))
             using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
-                var records = csv.GetRecords<VoteResult>().ToList();
+                var records = csv.GetRecords<VoteResultCsvDto>().ToList();
                 _voteResults.AddRange(records);
             }
         }
@@ -88,7 +89,7 @@ namespace TestAPI.Services
             int billsSupported = billVotes.Count(vr => vr.VoteType == VoteType.Yea);
             int billsOpposed = billVotes.Count(vr => vr.VoteType == VoteType.Nay);
 
-            string primarySponsor = bill.PrimarySponsor;
+            string primarySponsor = bill.Person.Name;
 
             return new BillSupportOppositionResult
             {

@@ -4,6 +4,7 @@ namespace TestAPI.Models
     {
         public int Id { get; set; }
         public string Title { get; set; }
-        public string PrimarySponsor { get; set; }
+        public int SponsorId { get; set; }
+        public Person PrimarySponsor { get; set; }
     }
 }
