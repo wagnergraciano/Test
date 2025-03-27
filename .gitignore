@@ -1,0 +1,50 @@
+# .NET Core
+bin/
+obj/
+.vs/
+.vscode/
+.idea/
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+# Windows installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows Installer Logs
+*.cab
+*.log
+
+# Windows Installer files
+*.vsix
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# .NET Core specific files
+project.lock.json
+project.fragment.lock.json
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Coverage folder (https://github.com/dotnet/coverlet)
+coverage/
+
+# Npm
+node_modules/
