@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using TestAPI.Dtos.Csv;
+using TestAPI.Mappings;
 
 namespace TestAPI.Services
 {
@@ -21,41 +22,56 @@ namespace TestAPI.Services
             _legislators = new List<Person>();
             _votes = new List<Vote>();
             _voteResults = new List<VoteResult>();
-            LoadDataFromCsv();
+            LoadAndConvertDataFromCsv();
         }
 
-        private void LoadDataFromCsv()
+        private void LoadAndConvertDataFromCsv()
         {
-            // Loading Bills
-            using (var reader = new StreamReader("Assets/bills_(2).csv"))
-            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-            {
-                var records = csv.GetRecords<BillCsvDto>().ToList();
-                _bills.AddRange(records);
-            }            
-
-            // Loading Legislators
+            //Could apply builder pattern
+            //Should use dbContext with EFCore
             using (var reader = new StreamReader("Assets/legislators_(2).csv"))
             using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
-                var records = csv.GetRecords<PersonCsvDto>().ToList();
-                _legislators.AddRange(records);
+                List<PersonCsvDto> people = csv.GetRecords<PersonCsvDto>().ToList();
+                foreach (PersonCsvDto personDto in people){
+                    Person legislator = MappingHelper.MapLegislatorCsvDtoToModel(personDto);
+                    _legislators.Add(legislator);
+                }
             }
 
-            // Loading Votes
+            using (var reader = new StreamReader("Assets/bills_(2).csv"))
+            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            {
+                List<BillCsvDto> bills = csv.GetRecords<BillCsvDto>().ToList();
+
+                foreach(BillCsvDto billDto in bills){
+                    Bill bill = MappingHelper.MapBillCsvDtoToModel(billDto);
+                    bill.PrimarySponsor = _legislators.FirstOrDefault(x => x.Id.Equals(billDto.sponsor_id));
+                    _bills.Add(bill);
+                }
+            }            
+
             using (var reader = new StreamReader("Assets/votes_(2).csv"))
             using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
-                var records = csv.GetRecords<VoteCsvDto>().ToList();
-                _votes.AddRange(records);
+                List<VoteCsvDto> votes = csv.GetRecords<VoteCsvDto>().ToList();
+                foreach(VoteCsvDto voteDto in votes){
+                    Vote vote = MappingHelper.MapVoteCsvDtoToModel(voteDto);
+                    vote.Bill = _bills.FirstOrDefault(x  => x.Id.Equals(vote.BillId));
+                    _votes.Add(vote);
+                }
             }
 
-            // Loading VoteResults
             using (var reader = new StreamReader("Assets/vote_results_(2).csv"))
             using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
-                var records = csv.GetRecords<VoteResultCsvDto>().ToList();
-                _voteResults.AddRange(records);
+                List<VoteResultCsvDto> voteResults = csv.GetRecords<VoteResultCsvDto>().ToList();
+                foreach(VoteResultCsvDto voteResultDto in voteResults){
+                    VoteResult voteResult = MappingHelper.MapVoteResultCsvDtoToModel(voteResultDto);
+                    voteResult.Legislator = _legislators.FirstOrDefault(x => x.Id.Equals(voteResult.LegislatorId));
+                    voteResult.Vote = _votes.FirstOrDefault(x => x.Id.Equals(voteResult.VoteId));
+                    _voteResults.Add(voteResult);
+                }
             }
         }
 
@@ -89,7 +105,7 @@ namespace TestAPI.Services
             int billsSupported = billVotes.Count(vr => vr.VoteType == VoteType.Yea);
             int billsOpposed = billVotes.Count(vr => vr.VoteType == VoteType.Nay);
 
-            string primarySponsor = bill.Person.Name;
+            string primarySponsor = bill.PrimarySponsor.Name;
 
             return new BillSupportOppositionResult
             {
