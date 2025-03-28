@@ -1,5 +1,10 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using TestAPI.Services;
+using TestAPI.Models;
+using TestAPI.UseCases.GetAllBills;
+using TestAPI.UseCases.GetAllLegislators;
+using TestAPI.UseCases.GetBillSupportsOpositionsById;
+using TestAPI.UseCases.GetLegislatorVotesCountById;
 
 namespace TestAPI.Controllers
 {
@@ -7,20 +12,25 @@ namespace TestAPI.Controllers
     [ApiController]
     public class VotingController : ControllerBase
     {
-        private readonly VotingService _votingService;
+        private readonly IMediator _mediator;
 
-        public VotingController(VotingService votingService)
+        public VotingController(IMediator mediator)
         {
-            _votingService = votingService;
+            _mediator = mediator;
         }
 
-        // Endpoint to get legislator's bill support and opposition count
-        [HttpGet("legislator/{legislatorId}/support-opposition")]
-        public async Task<IActionResult> GetLegislatorSupportOpposition(int legislatorId)
+        [HttpGet("legislator/support-opposition")]
+        public async Task<IActionResult> GetLegislatorSupportOpposition()
         {
             try
             {
-                var result = await _votingService.GetLegislatorSupportOppositionAsync(legislatorId);
+                List<GetLegislatorVotesCountByIdResponse> result = new List<GetLegislatorVotesCountByIdResponse>();
+                GetAllLegislatorsResponse legislators = await _mediator.Send(new GetAllLegislatorsRequest());
+                foreach(Person person in legislators.Legislators){
+                    GetLegislatorVotesCountByIdResponse legislatorVotesCount = await _mediator.Send(new GetLegislatorVotesCountByIdRequest(person.Id));
+                    result.Add(legislatorVotesCount);
+                }
+
                 return Ok(result);
             }
             catch (Exception ex)
@@ -29,13 +39,18 @@ namespace TestAPI.Controllers
             }
         }
 
-        // Endpoint to get bill's legislator support and opposition count
-        [HttpGet("bill/{billId}/support-opposition")]
-        public async Task<IActionResult> GetBillSupportOpposition(int billId)
+        [HttpGet("bill/support-opposition")]
+        public async Task<IActionResult> GetBillSupportOpposition()
         {
             try
             {
-                var result = await _votingService.GetBillSupportOppositionAsync(billId);
+                List<GetBillSupportsOpositionsByIdResponse> result = new List<GetBillSupportsOpositionsByIdResponse>();
+                GetAllBillsResponse bills = await _mediator.Send(new GetAllBillsRequest());
+                foreach(Bill bill in bills.Bills){
+                    GetBillSupportsOpositionsByIdResponse billSuportsOpositions = await _mediator.Send(new GetBillSupportsOpositionsByIdRequest(bill.Id));
+                    result.Add(billSuportsOpositions);
+                }
+
                 return Ok(result);
             }
             catch (Exception ex)
