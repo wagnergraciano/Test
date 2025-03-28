@@ -1,9 +1,6 @@
 using CsvHelper;
 using TestAPI.Models;
 using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using TestAPI.Dtos.Csv;
 using TestAPI.Mappings;
 
@@ -11,10 +8,16 @@ namespace TestAPI.Services
 {
     public class VotingService
     {
+        public List<Bill> Bills { get { return _bills; } }
+        public List<Person> Legislators { get { return _legislators; } }
+        public List<Vote> Votes { get {return _votes; } }
+        public List<VoteResult> VoteResults { get {return _voteResults; } }
+
         private readonly List<Bill> _bills;
         private readonly List<Person> _legislators;
         private readonly List<Vote> _votes;
         private readonly List<VoteResult> _voteResults;
+
 
         public VotingService()
         {
@@ -73,52 +76,6 @@ namespace TestAPI.Services
                     _voteResults.Add(voteResult);
                 }
             }
-        }
-
-
-        //Separate in useCases
-        //Use MediatR pattern
-        //Create IoC
-        public async Task<LegislatorBillSupportOppositionDto> GetLegislatorSupportOppositionAsync(int legislatorId)
-        {
-            Person legislator = _legislators.FirstOrDefault(l => l.Id == legislatorId);
-            if (legislator == null)
-                throw new ArgumentException("Legislator not found.");
-
-            List<VoteResult> legislatorVotes = _voteResults.Where(vr => vr.LegislatorId == legislatorId).ToList();
-
-            int billsSupported = legislatorVotes.Count(vr => vr.VoteType == VoteType.Yea);
-            int billsOpposed = legislatorVotes.Count(vr => vr.VoteType == VoteType.Nay);
-
-            return new LegislatorBillSupportOppositionDto
-            {
-                LegislatorId = legislatorId,
-                LegislatorName = legislator.Name,
-                BillsSupported = billsSupported,
-                BillsOpposed = billsOpposed
-            };
-        }
-
-        public async Task<BillSupportOppositionResultDto> GetBillSupportOppositionAsync(int billId)
-        {
-            Bill bill = _bills.FirstOrDefault(b => b.Id == billId);
-            if (bill == null)
-                throw new ArgumentException("Bill not found.");
-
-            List<VoteResult> billVotes = _voteResults.Where(vr => vr.Vote.BillId == billId).ToList();
-            int billsSupported = billVotes.Count(vr => vr.VoteType == VoteType.Yea);
-            int billsOpposed = billVotes.Count(vr => vr.VoteType == VoteType.Nay);
-
-            string primarySponsor = bill.PrimarySponsor.Name;
-
-            return new BillSupportOppositionResultDto
-            {
-                BillId = billId,
-                Title = bill.Title,
-                PrimarySponsor = primarySponsor,
-                LegislatorsSupported = billsSupported,
-                LegislatorsOpposed = billsOpposed
-            };
         }
     }
 }

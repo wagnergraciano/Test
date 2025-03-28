@@ -1,4 +1,6 @@
-    public class LegislatorBillSupportOppositionDto
+    namespace TestAPI.UseCases.GetLegislatorVotesCountById;
+
+    public class GetLegislatorVotesCountByIdResponse
     {
         public int LegislatorId { get; set; }
         public string LegislatorName { get; set; }

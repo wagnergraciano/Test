@@ -1,4 +1,6 @@
-    public class BillSupportOppositionResultDto
+    namespace TestAPI.UseCases.GetBillSupportsOpositionsById;
+
+    public class GetBillSupportsOpositionsByIdResponse
     {
         public int BillId { get; set; }
         public string Title { get; set; }
