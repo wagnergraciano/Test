@@ -12,7 +12,21 @@ builder.Services.AddMediatR(cfg=>cfg.RegisterServicesFromAssemblies(Assembly.Get
 builder.Services.AddScoped<VotingService>();  // Register the voting service
 builder.Services.AddControllers();            // Add controllers to the service container
 
+// Adicionando a configuração de CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")  // Permitir requisições do frontend Angular
+              .AllowAnyHeader()                      // Permitir qualquer cabeçalho
+              .AllowAnyMethod();                     // Permitir qualquer método HTTP (GET, POST, PUT, DELETE)
+    });
+});
+
 var app = builder.Build();
+
+// Aplicar o middleware CORS
+app.UseCors("AllowLocalhost");  // Usar a política de CORS "AllowLocalhost"
 
 // Configure the HTTP request pipeline
 app.UseRouting();

@@ -1,0 +1,23 @@
+<div class="table-container">
+  <h2>Bill Supports and Oppositions</h2>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Bill ID</th>
+        <th>Title</th>
+        <th>Primary Sponsor</th>
+        <th>Legislators Supported</th>
+        <th>Legislators Opposed</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let bill of bills">
+        <td>{{ bill.billId }}</td>
+        <td>{{ bill.title }}</td>
+        <td>{{ bill.primarySponsor }}</td>
+        <td>{{ bill.legislatorsSupported }}</td>
+        <td>{{ bill.legislatorsOpposed }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
