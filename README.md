@@ -24,7 +24,7 @@ dotnet restore
 
 ### 3. Construir o Projeto
 ```bash
-dotnet run
+dotnet build
 ```
 
 ### 4. Rodar o Projeto
