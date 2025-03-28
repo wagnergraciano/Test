@@ -27,8 +27,12 @@ namespace TestAPI.Controllers
                 List<GetLegislatorVotesCountByIdResponse> result = new List<GetLegislatorVotesCountByIdResponse>();
                 GetAllLegislatorsResponse legislators = await _mediator.Send(new GetAllLegislatorsRequest());
                 foreach(Person person in legislators.Legislators){
-                    GetLegislatorVotesCountByIdResponse legislatorVotesCount = await _mediator.Send(new GetLegislatorVotesCountByIdRequest(person.Id));
-                    result.Add(legislatorVotesCount);
+                    try
+                    {
+                        GetLegislatorVotesCountByIdResponse legislatorVotesCount = await _mediator.Send(new GetLegislatorVotesCountByIdRequest(person.Id));
+                        result.Add(legislatorVotesCount);
+                    }
+                    catch (Exception ex){}
                 }
 
                 return Ok(result);
@@ -47,8 +51,12 @@ namespace TestAPI.Controllers
                 List<GetBillSupportsOpositionsByIdResponse> result = new List<GetBillSupportsOpositionsByIdResponse>();
                 GetAllBillsResponse bills = await _mediator.Send(new GetAllBillsRequest());
                 foreach(Bill bill in bills.Bills){
-                    GetBillSupportsOpositionsByIdResponse billSuportsOpositions = await _mediator.Send(new GetBillSupportsOpositionsByIdRequest(bill.Id));
-                    result.Add(billSuportsOpositions);
+                    try
+                    {
+                            GetBillSupportsOpositionsByIdResponse billSuportsOpositions = await _mediator.Send(new GetBillSupportsOpositionsByIdRequest(bill.Id));
+                            result.Add(billSuportsOpositions);
+                    }
+                    catch (Exception ex) { }
                 }
 
                 return Ok(result);
